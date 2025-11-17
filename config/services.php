@@ -35,6 +35,7 @@ return [
         'key' => env('RAJAONGKIR_KEY'),
         'base_url' => env('RAJAONGKIR_BASE_URL', 'https://rajaongkir.komerce.id/api/v1'),
         'cache_hours' => env('RAJAONGKIR_CACHE_HOURS', 12),
+        'origin_district_id' => env('RAJAONGKIR_ORIGIN_DISTRICT_ID'),
     ],
 
 ];

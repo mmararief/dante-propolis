@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Order extends Model
 {
@@ -29,6 +30,10 @@ class Order extends Model
         'reservation_expires_at',
     ];
 
+    protected $appends = [
+        'bukti_pembayaran_url',
+    ];
+
     protected $casts = [
         'subtotal' => 'decimal:2',
         'ongkos_kirim' => 'decimal:2',
@@ -52,6 +57,13 @@ class Order extends Model
             ->whereNotNull('reservation_expires_at')
             ->where('reservation_expires_at', '<', now());
     }
+
+    public function getBuktiPembayaranUrlAttribute(): ?string
+    {
+        if (! $this->bukti_pembayaran) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->bukti_pembayaran);
+    }
 }
-
-

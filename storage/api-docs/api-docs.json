@@ -201,7 +201,17 @@
                                     "nama_lengkap",
                                     "username",
                                     "email",
-                                    "password"
+                                    "password",
+                                    "province_id",
+                                    "province_name",
+                                    "city_id",
+                                    "city_name",
+                                    "district_id",
+                                    "district_name",
+                                    "subdistrict_id",
+                                    "subdistrict_name",
+                                    "postal_code",
+                                    "alamat_lengkap"
                                 ],
                                 "properties": {
                                     "nama_lengkap": {
@@ -232,6 +242,38 @@
                                             "reseller"
                                         ],
                                         "example": "pelanggan"
+                                    },
+                                    "province_id": {
+                                        "type": "integer"
+                                    },
+                                    "province_name": {
+                                        "type": "string"
+                                    },
+                                    "city_id": {
+                                        "type": "integer"
+                                    },
+                                    "city_name": {
+                                        "type": "string"
+                                    },
+                                    "district_id": {
+                                        "type": "integer"
+                                    },
+                                    "district_name": {
+                                        "type": "string"
+                                    },
+                                    "subdistrict_id": {
+                                        "type": "integer"
+                                    },
+                                    "subdistrict_name": {
+                                        "type": "string"
+                                    },
+                                    "postal_code": {
+                                        "type": "string",
+                                        "example": "40123"
+                                    },
+                                    "alamat_lengkap": {
+                                        "type": "string",
+                                        "example": "Jl. Mawar no 1"
                                     }
                                 },
                                 "type": "object"
@@ -995,9 +1037,6 @@
             },
             "CheckoutRequest": {
                 "required": [
-                    "destination_city_id",
-                    "address",
-                    "phone",
                     "metode_pembayaran",
                     "items"
                 ],
@@ -1015,8 +1054,10 @@
                         "example": 149
                     },
                     "destination_city_id": {
+                        "description": "Isi jika ingin override alamat default pengguna",
                         "type": "integer",
-                        "example": 501
+                        "example": 501,
+                        "nullable": true
                     },
                     "destination_district_id": {
                         "type": "integer",

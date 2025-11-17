@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $categories = collect(['Propolis', 'Perawatan', 'Bundling'])
-            ->map(fn ($name) => Category::firstOrCreate(['nama_kategori' => $name]));
+            ->map(fn($name) => Category::firstOrCreate(['nama_kategori' => $name]));
 
         $products = collect([
             ['sku' => 'PRP-001', 'nama' => 'Propolis 10ml', 'harga' => 75000],
@@ -64,7 +64,7 @@ class DatabaseSeeder extends Seeder
 
             $batch = ProductBatch::create([
                 'product_id' => $product->id,
-                'batch_number' => 'BATCH-'.$product->id.'-'.now()->format('Ym'),
+                'batch_number' => 'BATCH-' . $product->id . '-' . now()->format('Ym'),
                 'qty_initial' => 100,
                 'qty_remaining' => 100,
                 'expiry_date' => now()->addMonths(6),
@@ -83,9 +83,42 @@ class DatabaseSeeder extends Seeder
             $product->refreshStockCache();
         }
 
-        Cache::put('rajaongkir:provinces', [
-            ['province_id' => 1, 'province' => 'DKI Jakarta'],
-            ['province_id' => 9, 'province' => 'Jawa Barat'],
-        ], now()->addDay());
+        // Cache::put('rajaongkir:provinces', [
+        //     ['province_id' => 1, 'province' => 'NUSA TENGGARA BARAT (NTB)'],
+        //     ['province_id' => 2, 'province' => 'NUSA TENGGARA BARAT'],
+        //     ['province_id' => 3, 'province' => 'MALUKU'],
+        //     ['province_id' => 4, 'province' => 'KALIMANTAN SELATAN'],
+        //     ['province_id' => 5, 'province' => 'KALIMANTAN TENGAH'],
+        //     ['province_id' => 6, 'province' => 'JAWA BARAT'],
+        //     ['province_id' => 7, 'province' => 'BENGKULU'],
+        //     ['province_id' => 8, 'province' => 'KALIMANTAN TIMUR'],
+        //     ['province_id' => 9, 'province' => 'KEPULAUAN RIAU'],
+        //     ['province_id' => 10, 'province' => 'NANGGROE ACEH DARUSSALAM (NAD)'],
+        //     ['province_id' => 11, 'province' => 'DKI JAKARTA'],
+        //     ['province_id' => 12, 'province' => 'BANTEN'],
+        //     ['province_id' => 13, 'province' => 'JAWA TENGAH'],
+        //     ['province_id' => 14, 'province' => 'JAMBI'],
+        //     ['province_id' => 15, 'province' => 'PAPUA'],
+        //     ['province_id' => 16, 'province' => 'BALI'],
+        //     ['province_id' => 17, 'province' => 'SUMATERA UTARA'],
+        //     ['province_id' => 18, 'province' => 'GORONTALO'],
+        //     ['province_id' => 19, 'province' => 'JAWA TIMUR'],
+        //     ['province_id' => 20, 'province' => 'DI YOGYAKARTA'],
+        //     ['province_id' => 21, 'province' => 'SULAWESI TENGGARA'],
+        //     ['province_id' => 22, 'province' => 'NUSA TENGGARA TIMUR (NTT)'],
+        //     ['province_id' => 23, 'province' => 'SULAWESI UTARA'],
+        //     ['province_id' => 24, 'province' => 'SUMATERA BARAT'],
+        //     ['province_id' => 25, 'province' => 'BANGKA BELITUNG'],
+        //     ['province_id' => 26, 'province' => 'RIAU'],
+        //     ['province_id' => 27, 'province' => 'SUMATERA SELATAN'],
+        //     ['province_id' => 28, 'province' => 'SULAWESI TENGAH'],
+        //     ['province_id' => 29, 'province' => 'KALIMANTAN BARAT'],
+        //     ['province_id' => 30, 'province' => 'PAPUA BARAT'],
+        //     ['province_id' => 31, 'province' => 'LAMPUNG'],
+        //     ['province_id' => 32, 'province' => 'KALIMANTAN UTARA'],
+        //     ['province_id' => 33, 'province' => 'MALUKU UTARA'],
+        //     ['province_id' => 34, 'province' => 'SULAWESI SELATAN'],
+        //     ['province_id' => 35, 'province' => 'SULAWESI BARAT'],
+        // ], now()->addDay());
     }
 }

@@ -66,11 +66,11 @@ class CheckoutItemSchema {}
 /**
  * @OA\Schema(
  *     schema="CheckoutRequest",
- *     required={"destination_city_id","address","phone","metode_pembayaran","items"},
+ *     required={"metode_pembayaran","items"},
  *     @OA\Property(property="courier", type="string", example="jne"),
  *     @OA\Property(property="courier_service", type="string", example="REG"),
  *     @OA\Property(property="origin_city_id", type="integer", example=149),
- *     @OA\Property(property="destination_city_id", type="integer", example=501),
+ *     @OA\Property(property="destination_city_id", type="integer", nullable=true, example=501, description="Isi jika ingin override alamat default pengguna"),
  *     @OA\Property(property="destination_district_id", type="integer", nullable=true),
  *     @OA\Property(property="destination_subdistrict_id", type="integer", nullable=true),
  *     @OA\Property(property="address", type="string", example="Jl. Mawar no 1"),

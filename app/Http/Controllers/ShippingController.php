@@ -73,11 +73,14 @@ class ShippingController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"origin","destination","weight","courier"},
-     *             @OA\Property(property="origin", type="integer"),
-     *             @OA\Property(property="destination", type="integer"),
+     *             required={"weight","courier"},
+     *             @OA\Property(property="origin", type="integer", nullable=true),
+     *             @OA\Property(property="destination", type="integer", nullable=true),
+     *             @OA\Property(property="origin_district_id", type="integer", nullable=true),
+     *             @OA\Property(property="destination_district_id", type="integer", nullable=true),
      *             @OA\Property(property="weight", type="integer", description="Dalam gram"),
-     *             @OA\Property(property="courier", type="string", example="jne")
+     *             @OA\Property(property="courier", type="string", example="jne"),
+     *             @OA\Property(property="price", type="string", example="lowest")
      *         )
      *     ),
      *     @OA\Response(response=200, description="Daftar layanan & biaya")
@@ -86,11 +89,22 @@ class ShippingController extends Controller
     public function cost(Request $request)
     {
         $data = $request->validate([
-            'origin' => ['required', 'integer'],
-            'destination' => ['required', 'integer'],
+            'origin' => ['nullable', 'integer'],
+            'destination' => ['nullable', 'integer'],
             'weight' => ['required', 'integer', 'min:1'],
             'courier' => ['required', 'string'],
+            'origin_district_id' => ['nullable', 'integer'],
+            'destination_district_id' => ['nullable', 'integer'],
+            'price' => ['nullable', 'string'],
         ]);
+
+        $hasDistrict = ($data['origin_district_id'] ?? config('services.rajaongkir.origin_district_id')) && $data['destination_district_id'];
+
+        if (! $hasDistrict) {
+            if (empty($data['origin']) || empty($data['destination'])) {
+                return $this->fail('Origin / destination tidak lengkap.', 422);
+            }
+        }
 
         return $this->success($this->rajaOngkir->getCost($data));
     }

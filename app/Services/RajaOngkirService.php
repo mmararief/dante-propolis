@@ -10,11 +10,13 @@ class RajaOngkirService
 {
     private string $baseUrl;
     private string $apiKey;
+    private ?string $originDistrictId;
 
     public function __construct()
     {
         $this->baseUrl = rtrim(config('services.rajaongkir.base_url'), '/');
         $this->apiKey = (string) config('services.rajaongkir.key');
+        $this->originDistrictId = config('services.rajaongkir.origin_district_id');
     }
 
     public function getProvinces(): array
@@ -55,10 +57,30 @@ class RajaOngkirService
 
     public function getCost(array $payload): array
     {
-        return $this->request('post', '/cost', $payload);
+        $originDistrict = $payload['origin_district_id'] ?? $this->originDistrictId;
+        $destinationDistrict = $payload['destination_district_id'] ?? null;
+
+        if ($originDistrict && $destinationDistrict) {
+            $body = [
+                'origin' => $originDistrict,
+                'destination' => $destinationDistrict,
+                'weight' => $payload['weight'] ?? 1000,
+                'courier' => $payload['courier'] ?? 'jne',
+                'price' => $payload['price'] ?? 'lowest',
+            ];
+
+            return $this->request('post', '/calculate/district/domestic-cost', $body, true);
+        }
+
+        return $this->request('post', '/cost', [
+            'origin' => $payload['origin'] ?? $payload['origin_city_id'] ?? null,
+            'destination' => $payload['destination'] ?? $payload['destination_city_id'] ?? null,
+            'weight' => $payload['weight'] ?? 1000,
+            'courier' => $payload['courier'] ?? 'jne',
+        ]);
     }
 
-    private function request(string $method, string $endpoint, array $payload = []): array
+    private function request(string $method, string $endpoint, array $payload = [], bool $asForm = false): array
     {
         $options = Http::withHeaders([
             'Key' => $this->apiKey,
@@ -66,6 +88,10 @@ class RajaOngkirService
         ])->timeout(15)->retry(2, 200, function ($exception) {
             return $exception instanceof RequestException && $exception->getCode() === 429;
         });
+
+        if ($asForm) {
+            $options = $options->asForm();
+        }
 
         $url = $this->baseUrl.$endpoint;
 

@@ -37,11 +37,11 @@ class CheckoutController extends Controller
             'courier' => ['nullable', 'string', 'max:50'],
             'courier_service' => ['nullable', 'string', 'max:50'],
             'origin_city_id' => ['nullable', 'integer'],
-            'destination_city_id' => ['required', 'integer'],
+            'destination_city_id' => ['nullable', 'integer'],
             'destination_district_id' => ['nullable', 'integer'],
             'destination_subdistrict_id' => ['nullable', 'integer'],
-            'address' => ['required', 'string'],
-            'phone' => ['required', 'string', 'max:20'],
+            'address' => ['nullable', 'string'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'metode_pembayaran' => ['required', 'in:BCA,BSI,gopay,dana,transfer_manual'],
             'ongkos_kirim' => ['nullable', 'numeric', 'min:0'],
             'items' => ['required', 'array', 'min:1'],
@@ -57,8 +57,19 @@ class CheckoutController extends Controller
             return $this->fail('User harus login untuk checkout', 401);
         }
 
+        $primaryAddress = $user->addresses()->first();
+        $destinationCityId = $data['destination_city_id'] ?? $primaryAddress?->city_id;
+        $destinationDistrictId = $data['destination_district_id'] ?? $primaryAddress?->district_id;
+        $destinationSubdistrictId = $data['destination_subdistrict_id'] ?? $primaryAddress?->subdistrict_id;
+        $addressText = $data['address'] ?? $primaryAddress?->address ?? $user->alamat_lengkap;
+        $phone = $data['phone'] ?? $primaryAddress?->phone ?? $user->no_hp;
+
+        if (! $destinationCityId || ! $addressText || ! $phone) {
+            return $this->fail('Alamat tujuan belum lengkap. Lengkapi profil/registrasi terlebih dahulu.', 422);
+        }
+
         try {
-            $order = DB::transaction(function () use ($user, $data) {
+            $order = DB::transaction(function () use ($user, $data, $destinationCityId, $destinationDistrictId, $destinationSubdistrictId, $addressText, $phone) {
                 $pricing = $this->calculatePricing($data['items']);
 
                 $order = Order::create([
@@ -69,11 +80,11 @@ class CheckoutController extends Controller
                     'courier' => $data['courier'] ?? null,
                     'courier_service' => $data['courier_service'] ?? null,
                     'origin_city_id' => $data['origin_city_id'] ?? null,
-                    'destination_city_id' => $data['destination_city_id'],
-                    'destination_district_id' => $data['destination_district_id'] ?? null,
-                    'destination_subdistrict_id' => $data['destination_subdistrict_id'] ?? null,
-                    'address' => $data['address'],
-                    'phone' => $data['phone'],
+                    'destination_city_id' => $destinationCityId,
+                    'destination_district_id' => $destinationDistrictId,
+                    'destination_subdistrict_id' => $destinationSubdistrictId,
+                    'address' => $addressText,
+                    'phone' => $phone,
                     'status' => 'belum_dibayar',
                     'metode_pembayaran' => $data['metode_pembayaran'],
                 ]);
