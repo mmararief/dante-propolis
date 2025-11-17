@@ -1,0 +1,1106 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Propolis Fulfillment API",
+        "description": "Dokumentasi resmi layanan backend Propolis. Semua response menggunakan format {success, data, message}.",
+        "contact": {
+            "name": "Tim Propolis",
+            "email": "support@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "API Root"
+        },
+        {
+            "url": "http://localhost:8000/api"
+        }
+    ],
+    "paths": {
+        "/admin/orders": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Daftar order",
+                "operationId": "38dbfcc9c8ca1dc1ea794f1e7143d9c1",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar order"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Detail order untuk admin",
+                "operationId": "d0ebbbb1b2a3aee324b8e64826b88b6c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail order"
+                    },
+                    "404": {
+                        "description": "Order tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/orders/{id}/verify-payment": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Verifikasi pembayaran dan alokasi batch",
+                "operationId": "b5870a606a5c91804126c08682a883cf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order dialokasikan"
+                    },
+                    "422": {
+                        "description": "Status tidak valid"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/orders/{id}/ship": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Input resi pengiriman",
+                "operationId": "eea77259753a8f087c41903ce5f50a04",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "resi"
+                                ],
+                                "properties": {
+                                    "resi": {
+                                        "type": "string",
+                                        "example": "JNE123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order dikirim"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/run-reservation-release": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Trigger job pelepasan reservasi stok",
+                "operationId": "0ec56a69f859ee7d122106714082c48d",
+                "responses": {
+                    "200": {
+                        "description": "Job dikirim ke antrean"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registrasi akun baru",
+                "operationId": "ed42f392010c301892e640067141676e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_lengkap",
+                                    "username",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "nama_lengkap": {
+                                        "type": "string",
+                                        "example": "Jane Doe"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "jane"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8
+                                    },
+                                    "no_hp": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pelanggan",
+                                            "reseller"
+                                        ],
+                                        "example": "pelanggan"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registrasi berhasil"
+                    },
+                    "422": {
+                        "description": "Validasi gagal"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login dan mendapatkan token",
+                "operationId": "8cb7742ae98d0990acb2907c4e00bf24",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login berhasil"
+                    },
+                    "401": {
+                        "description": "Kredensial salah"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout dan revoke token",
+                "operationId": "0d29c740dc06d77602af8095bf4654cc",
+                "responses": {
+                    "200": {
+                        "description": "Logout berhasil"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/products/{productId}/batches": {
+            "get": {
+                "tags": [
+                    "Batches"
+                ],
+                "summary": "Daftar batch untuk produk",
+                "operationId": "3cdef7944210edf969612d50eda4b296",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar batch"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Batches"
+                ],
+                "summary": "Tambah batch baru / restock",
+                "operationId": "58315c63c52c24504a80010bd07218e0",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "batch_number",
+                                    "qty_initial"
+                                ],
+                                "properties": {
+                                    "batch_number": {
+                                        "type": "string"
+                                    },
+                                    "qty_initial": {
+                                        "type": "integer"
+                                    },
+                                    "expiry_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "nullable": true
+                                    },
+                                    "purchase_price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Batch berhasil ditambahkan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/checkout": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Checkout dan reservasi batch",
+                "operationId": "b629ac636c824c74693d0dd05aa6b31b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CheckoutRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order berhasil dibuat"
+                    },
+                    "401": {
+                        "description": "Tidak terautentikasi"
+                    },
+                    "422": {
+                        "description": "Stok tidak mencukupi"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Detail order milik pelanggan",
+                "operationId": "f088d34a2737782215f435f854e31de5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail order beserta alokasi batch"
+                    },
+                    "403": {
+                        "description": "Tidak berhak mengakses order ini"
+                    },
+                    "404": {
+                        "description": "Order tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/orders/{id}/upload-proof": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Upload bukti pembayaran",
+                "operationId": "411db1287f08c3903f826f0782f27596",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "bukti"
+                                ],
+                                "properties": {
+                                    "bukti": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bukti pembayaran tersimpan"
+                    },
+                    "404": {
+                        "description": "Order tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Daftar produk",
+                "operationId": "c1ff6f862214e1896c59cfe0491ce0e8",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter status produk (aktif/nonaktif)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "kategori_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan kategori",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah item per halaman",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil memuat produk",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Tambah produk baru",
+                "operationId": "399770d33fa4672f1216707d0e236763",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "kategori_id",
+                                    "sku",
+                                    "nama_produk",
+                                    "harga_ecer",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "kategori_id": {
+                                        "type": "integer"
+                                    },
+                                    "sku": {
+                                        "type": "string"
+                                    },
+                                    "nama_produk": {
+                                        "type": "string"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "harga_ecer": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "stok": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "gambar": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "aktif",
+                                            "nonaktif"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produk berhasil dibuat"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/products/{id}": {
+            "put": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Perbarui produk",
+                "operationId": "1419d479f9340e30e67fe21a2ca525b7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "kategori_id": {
+                                        "type": "integer"
+                                    },
+                                    "sku": {
+                                        "type": "string"
+                                    },
+                                    "nama_produk": {
+                                        "type": "string"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string"
+                                    },
+                                    "harga_ecer": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "stok": {
+                                        "type": "integer"
+                                    },
+                                    "gambar": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "aktif",
+                                            "nonaktif"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produk diperbarui"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/products/{productId}/price-tiers": {
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Tambahkan harga tingkat",
+                "operationId": "7d267b2b371593603b6b87770d35e6c2",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "min_jumlah",
+                                    "harga_total"
+                                ],
+                                "properties": {
+                                    "min_jumlah": {
+                                        "type": "integer"
+                                    },
+                                    "max_jumlah": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "harga_total": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "label": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Harga tingkat ditambahkan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/reports/batch-stock": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Laporan stok per batch",
+                "operationId": "de0ae838aa8832b64efb6edf8e06187d",
+                "responses": {
+                    "200": {
+                        "description": "Berhasil memuat laporan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/reports/batch-sales": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Laporan penjualan per batch",
+                "operationId": "622d41b36b8c0d52a26b086cf34de87c",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "Tanggal awal (Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "Tanggal akhir (Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Berhasil memuat laporan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/shipping/provinces": {
+            "get": {
+                "tags": [
+                    "Shipping"
+                ],
+                "summary": "Daftar provinsi tujuan",
+                "operationId": "94bf4900ed99f22a03660236f1e9271e",
+                "responses": {
+                    "200": {
+                        "description": "Data provinsi"
+                    }
+                }
+            }
+        },
+        "/shipping/cities/{province_id}": {
+            "get": {
+                "tags": [
+                    "Shipping"
+                ],
+                "summary": "Daftar kota/kabupaten",
+                "operationId": "5bf77f2968a11db420cab8ae9c443878",
+                "parameters": [
+                    {
+                        "name": "province_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data kota/kabupaten"
+                    }
+                }
+            }
+        },
+        "/shipping/districts/{city_id}": {
+            "get": {
+                "tags": [
+                    "Shipping"
+                ],
+                "summary": "Daftar kecamatan",
+                "operationId": "b610fb9b2348793a34d5f9480a318c4d",
+                "parameters": [
+                    {
+                        "name": "city_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data kecamatan"
+                    }
+                }
+            }
+        },
+        "/shipping/subdistricts/{district_id}": {
+            "get": {
+                "tags": [
+                    "Shipping"
+                ],
+                "summary": "Daftar kelurahan",
+                "operationId": "6ba73dae38e5a906c8ac83006e716069",
+                "parameters": [
+                    {
+                        "name": "district_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data kelurahan"
+                    }
+                }
+            }
+        },
+        "/shipping/cost": {
+            "post": {
+                "tags": [
+                    "Shipping"
+                ],
+                "summary": "Hitung biaya pengiriman",
+                "operationId": "8dd9fe8f5417df50aa89d2b1c0299263",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "origin",
+                                    "destination",
+                                    "weight",
+                                    "courier"
+                                ],
+                                "properties": {
+                                    "origin": {
+                                        "type": "integer"
+                                    },
+                                    "destination": {
+                                        "type": "integer"
+                                    },
+                                    "weight": {
+                                        "description": "Dalam gram",
+                                        "type": "integer"
+                                    },
+                                    "courier": {
+                                        "type": "string",
+                                        "example": "jne"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Daftar layanan & biaya"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CheckoutItem": {
+                "required": [
+                    "product_id",
+                    "jumlah"
+                ],
+                "properties": {
+                    "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "jumlah": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "harga_tingkat_id": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "catatan": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "CheckoutRequest": {
+                "required": [
+                    "destination_city_id",
+                    "address",
+                    "phone",
+                    "metode_pembayaran",
+                    "items"
+                ],
+                "properties": {
+                    "courier": {
+                        "type": "string",
+                        "example": "jne"
+                    },
+                    "courier_service": {
+                        "type": "string",
+                        "example": "REG"
+                    },
+                    "origin_city_id": {
+                        "type": "integer",
+                        "example": 149
+                    },
+                    "destination_city_id": {
+                        "type": "integer",
+                        "example": 501
+                    },
+                    "destination_district_id": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "destination_subdistrict_id": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "Jl. Mawar no 1"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "628123456789"
+                    },
+                    "metode_pembayaran": {
+                        "type": "string",
+                        "enum": [
+                            "BCA",
+                            "BSI",
+                            "gopay",
+                            "dana",
+                            "transfer_manual"
+                        ]
+                    },
+                    "ongkos_kirim": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 20000
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CheckoutItem"
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "Token",
+                "description": "Masukkan token Sanctum dengan format \"Bearer {token}\"."
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Products",
+            "description": "Katalog produk dan stok batch."
+        },
+        {
+            "name": "Shipping",
+            "description": "Integrasi RajaOngkir."
+        },
+        {
+            "name": "Orders",
+            "description": "Checkout & order pelanggan."
+        },
+        {
+            "name": "Admin",
+            "description": "Operasi administratif."
+        },
+        {
+            "name": "Auth",
+            "description": "Registrasi, login, logout."
+        },
+        {
+            "name": "Batches",
+            "description": "Batches"
+        },
+        {
+            "name": "Reports",
+            "description": "Reports"
+        }
+    ],
+    "security": [
+        {
+            "sanctum": []
+        }
+    ]
+}
